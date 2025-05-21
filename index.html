@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>Google Drive aleatorio embebido</title>
 </head>
 <body>
-  <p id="enlace"></p>
+  <h2>Vista aleatoria de Google Drive</h2>
+  <div id="visor"></div>
 
   <script>
     const urls = [
@@ -21,8 +23,15 @@
 
     const elegida = urls[Math.floor(Math.random() * urls.length)];
 
-    const contenedor = document.getElementById("enlace");
-    contenedor.innerHTML = `<a href="${elegida}" target="_blank">${elegida}</a>`;
+    // Extraer ID del archivo
+    const id = elegida.match(/\/d\/([^\/]+)/)[1];
+
+    // Crear la URL de vista previa
+    const embedUrl = `https://drive.google.com/file/d/${id}/preview`;
+
+    // Mostrar en iframe
+    const iframe = `<iframe src="${embedUrl}" width="640" height="480" allow="autoplay"></iframe>`;
+    document.getElementById("visor").innerHTML = iframe;
   </script>
 </body>
 </html>
