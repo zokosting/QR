@@ -8,28 +8,54 @@
         No audio.
   </audio>
   <script>
-    // Lista de archivos MP3 (URL encoded)
-    const archivos = [
-      "Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
-      "Pensamientos%20positivos.mp3",
-      "Audio%20motivacional.mp3"
-    ];
-    // Seleccionar aleatoriamente
-    const elegido = archivos[Math.floor(Math.random() * archivos.length)];
-    // Ruta base RAW
-    const urlBase = "https://raw.githubusercontent.com/zokosting/QR/main/";
-    // Añadir la fuente
-    const audio = document.getElementById("audioPlayer");
-    const source = document.createElement("source");
-    source.src = urlBase + elegido;
-    source.type = "audio/mpeg";
-    audio.appendChild(source);
-    // Cargar el audio
-    audio.load();
-    // Quitar el mute después de que empiece la reproducción
-    audio.onplay = () => {
-      audio.muted = false;
-    };
+    const repo = "zokosting/QR";
+    const carpeta = ""; // carpeta raíz; si estuviera en una subcarpeta, poner el nombre
+    const urlBaseRaw = `https://raw.githubusercontent.com/${repo}/main/`;
+
+    async function obtenerArchivosMP3() {
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${carpeta}`;
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("No se pudo obtener la lista de archivos");
+        const data = await response.json();
+
+        // Filtrar solo archivos .mp3
+        const mp3Files = data
+          .filter(item => item.type === "file" && item.name.toLowerCase().endsWith(".mp3"))
+          .map(item => encodeURIComponent(item.name));
+
+        return mp3Files;
+      } catch (error) {
+        console.error("Error al obtener archivos MP3:", error);
+        return [];
+      }
+    }
+
+    async function reproducirAudioAleatorio() {
+      const archivos = await obtenerArchivosMP3();
+
+      if (archivos.length === 0) {
+        alert("No se encontraron archivos MP3 en el repositorio.");
+        return;
+      }
+
+      // Elegir uno aleatorio
+      const elegido = archivos[Math.floor(Math.random() * archivos.length)];
+
+      const audio = document.getElementById("audioPlayer");
+      const source = document.createElement("source");
+      source.src = urlBaseRaw + decodeURIComponent(elegido);
+      source.type = "audio/mpeg";
+
+      audio.appendChild(source);
+      audio.load();
+
+      audio.onplay = () => {
+        audio.muted = false;
+      };
+    }
+
+    reproducirAudioAleatorio();
   </script>
 </body>
 </html>
