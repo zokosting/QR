@@ -1,37 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Google Drive aleatorio embebido</title>
+  <meta charset="UTF-8" />
+  <title>Redirección aleatoria</title>
+  <script>
+    window.onload = function() {
+      const urls = [
+        "https://drive.google.com/file/d/11d5ulRWmtcvyPZu6Wr_FK54j4sUYHVRX/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-ApRRqnfmgPBffoAc2-zbf6w6ZlM64wt/view?usp=drive_link",
+        "https://drive.google.com/file/d/1OrHR6eJ8yRFJMjYLNRnQ2-z2Vx7PYrnD/view?usp=drive_link",
+        "https://drive.google.com/file/d/17GB5ZeXq7aiuLyf-IlJqgZV74_dKtb8I/view?usp=drive_link",
+        "https://drive.google.com/file/d/17ZB-sRJYug6423mVAGKpFqJrH32-zhAe/view?usp=drive_link",
+        "https://drive.google.com/file/d/1VMTqdEvDLbxceivmyEcmU__CpW-cYzHE/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-CsOOs9ttNYyK7jMCk1tTaVNL1eQxm6I/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-MK9iUanra1ZsyCvsonKy1RJ7D38YEre/view?usp=drive_link",
+        "https://drive.google.com/file/d/12iIsocjms0SoX17Q2QcMQlfCu_ZoqPHr/view?usp=drive_link"
+      ];
+
+      const aleatoria = urls[Math.floor(Math.random() * urls.length)];
+      window.location.href = aleatoria;
+    };
+  </script>
 </head>
 <body>
-  <h2>Vista aleatoria de Google Drive</h2>
-  <div id="visor"></div>
-
-  <script>
-    const urls = [
-      "https://drive.google.com/file/d/11d5ulRWmtcvyPZu6Wr_FK54j4sUYHVRX/view?usp=drive_link",
-      "https://drive.google.com/file/d/1-ApRRqnfmgPBffoAc2-zbf6w6ZlM64wt/view?usp=drive_link",
-      "https://drive.google.com/file/d/1OrHR6eJ8yRFJMjYLNRnQ2-z2Vx7PYrnD/view?usp=drive_link",
-      "https://drive.google.com/file/d/17GB5ZeXq7aiuLyf-IlJqgZV74_dKtb8I/view?usp=drive_link",
-      "https://drive.google.com/file/d/17ZB-sRJYug6423mVAGKpFqJrH32-zhAe/view?usp=drive_link",
-      "https://drive.google.com/file/d/1VMTqdEvDLbxceivmyEcmU__CpW-cYzHE/view?usp=drive_link",
-      "https://drive.google.com/file/d/1-CsOOs9ttNYyK7jMCk1tTaVNL1eQxm6I/view?usp=drive_link",
-      "https://drive.google.com/file/d/1-MK9iUanra1ZsyCvsonKy1RJ7D38YEre/view?usp=drive_link",
-      "https://drive.google.com/file/d/12iIsocjms0SoX17Q2QcMQlfCu_ZoqPHr/view?usp=drive_link"
-    ];
-
-    const elegida = urls[Math.floor(Math.random() * urls.length)];
-
-    // Extraer ID del archivo
-    const id = elegida.match(/\/d\/([^\/]+)/)[1];
-
-    // Crear la URL de vista previa
-    const embedUrl = `https://drive.google.com/file/d/${id}/preview`;
-
-    // Mostrar en iframe
-    const iframe = `<iframe src="${embedUrl}" width="640" height="480" allow="autoplay"></iframe>`;
-    document.getElementById("visor").innerHTML = iframe;
-  </script>
+  <p>Redirigiendo a contenido aleatorio...</p>
 </body>
 </html>
