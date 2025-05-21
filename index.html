@@ -4,8 +4,32 @@
   <meta charset="UTF-8">
 </head>
 <body>
-  <audio controls autoplay>
-  <source src="https://raw.githubusercontent.com/zokosting/QR/main/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3" type="audio/mpeg">  
+  <audio controls id="audioPlayer" autoplay muted>
+        No audio.
   </audio>
+  <script>
+    // Lista de archivos MP3 (URL encoded)
+    const archivos = [
+      "Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
+      "Pensamientos%20positivos.mp3",
+      "Audio%20motivacional.mp3"
+    ];
+    // Seleccionar aleatoriamente
+    const elegido = archivos[Math.floor(Math.random() * archivos.length)];
+    // Ruta base RAW
+    const urlBase = "https://raw.githubusercontent.com/zokosting/QR/main/";
+    // Añadir la fuente
+    const audio = document.getElementById("audioPlayer");
+    const source = document.createElement("source");
+    source.src = urlBase + elegido;
+    source.type = "audio/mpeg";
+    audio.appendChild(source);
+    // Cargar el audio
+    audio.load();
+    // Quitar el mute después de que empiece la reproducción
+    audio.onplay = () => {
+      audio.muted = false;
+    };
+  </script>
 </body>
 </html>
