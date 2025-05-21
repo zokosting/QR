@@ -2,14 +2,16 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <title>Reproductor de Audio Aleatorio</title>
 </head>
 <body>
   <audio controls id="audioPlayer" autoplay muted>
-    No audio.
+    Tu navegador no soporta audio.
   </audio>
+
   <script>
     const repo = "zokosting/QR";
-    const carpeta = ""; // carpeta raíz
+    const carpeta = ""; // raíz del repositorio
     const urlBaseRaw = `https://raw.githubusercontent.com/${repo}/main/`;
 
     async function obtenerArchivosMP3() {
@@ -18,12 +20,9 @@
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error("No se pudo obtener la lista de archivos");
         const data = await response.json();
-
-        const mp3Files = data
+        return data
           .filter(item => item.type === "file" && item.name.toLowerCase().endsWith(".mp3"))
           .map(item => encodeURIComponent(item.name));
-
-        return mp3Files;
       } catch (error) {
         console.error("Error al obtener archivos MP3:", error);
         return [];
@@ -39,22 +38,23 @@
 
       const elegido = archivos[Math.floor(Math.random() * archivos.length)];
       const audio = document.getElementById("audioPlayer");
-      audio.innerHTML = "";
+      audio.innerHTML = ""; // limpia cualquier <source> previo
 
       const source = document.createElement("source");
       source.src = urlBaseRaw + decodeURIComponent(elegido);
       source.type = "audio/mpeg";
       audio.appendChild(source);
+
       audio.load();
 
-      // Esperar hasta que el navegador esté listo para reproducir
-      audio.addEventListener("canplaythrough", () => {
-        audio.play().then(() => {
-          audio.muted = false;
-        }).catch(err => {
-          console.log("Autoplay falló:", err);
-        });
-      });
+      // Reproducir automáticamente silenciado
+      try {
+        await audio.play();
+        // Quitar mute justo después de iniciar la reproducción
+        audio.muted = false;
+      } catch (err) {
+        console.warn("El navegador bloqueó el autoplay:", err);
+      }
     }
 
     reproducirAudioAleatorio();
