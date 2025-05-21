@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
 </head>
 <body>
   <audio controls id="audioPlayer" autoplay muted>
-        No audio.
+    No audio.
   </audio>
   <script>
     const repo = "zokosting/QR";
@@ -43,6 +43,10 @@
       const elegido = archivos[Math.floor(Math.random() * archivos.length)];
 
       const audio = document.getElementById("audioPlayer");
+
+      // Limpiar fuentes anteriores si hay alguna
+      audio.innerHTML = "";
+
       const source = document.createElement("source");
       source.src = urlBaseRaw + decodeURIComponent(elegido);
       source.type = "audio/mpeg";
@@ -50,9 +54,13 @@
       audio.appendChild(source);
       audio.load();
 
-      audio.onplay = () => {
+      // Reproducir manualmente porque autoplay no se activa tras load()
+      try {
+        await audio.play();
         audio.muted = false;
-      };
+      } catch (error) {
+        console.log("No se pudo reproducir automáticamente:", error);
+      }
     }
 
     reproducirAudioAleatorio();
