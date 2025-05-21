@@ -2,16 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Reproductor de Audio Aleatorio</title>
 </head>
 <body>
   <audio controls id="audioPlayer" autoplay muted>
-    Tu navegador no soporta audio.
+    No audio.
   </audio>
-
   <script>
     const repo = "zokosting/QR";
-    const carpeta = ""; // raíz del repositorio
+    const carpeta = ""; // carpeta raíz; si estuviera en una subcarpeta, poner el nombre
     const urlBaseRaw = `https://raw.githubusercontent.com/${repo}/main/`;
 
     async function obtenerArchivosMP3() {
@@ -20,9 +18,13 @@
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error("No se pudo obtener la lista de archivos");
         const data = await response.json();
-        return data
+
+        // Filtrar solo archivos .mp3
+        const mp3Files = data
           .filter(item => item.type === "file" && item.name.toLowerCase().endsWith(".mp3"))
           .map(item => encodeURIComponent(item.name));
+
+        return mp3Files;
       } catch (error) {
         console.error("Error al obtener archivos MP3:", error);
         return [];
@@ -31,29 +33,33 @@
 
     async function reproducirAudioAleatorio() {
       const archivos = await obtenerArchivosMP3();
+
       if (archivos.length === 0) {
         alert("No se encontraron archivos MP3 en el repositorio.");
         return;
       }
 
+      // Elegir uno aleatorio
       const elegido = archivos[Math.floor(Math.random() * archivos.length)];
+
       const audio = document.getElementById("audioPlayer");
-      audio.innerHTML = ""; // limpia cualquier <source> previo
+
+      // Limpiar fuentes anteriores si hay alguna
+      audio.innerHTML = "";
 
       const source = document.createElement("source");
       source.src = urlBaseRaw + decodeURIComponent(elegido);
       source.type = "audio/mpeg";
-      audio.appendChild(source);
 
+      audio.appendChild(source);
       audio.load();
 
-      // Reproducir automáticamente silenciado
+      // Reproducir manualmente porque autoplay no se activa tras load()
       try {
         await audio.play();
-        // Quitar mute justo después de iniciar la reproducción
         audio.muted = false;
-      } catch (err) {
-        console.warn("El navegador bloqueó el autoplay:", err);
+      } catch (error) {
+        console.log("No se pudo reproducir automáticamente:", error);
       }
     }
 
