@@ -4,66 +4,25 @@
   <meta charset="UTF-8" />
 </head>
 <body>
-  <audio controls autoplay muted>
-    <source src="https://drive.google.com/file/d/17ZB-sRJYug6423mVAGKpFqJrH32-zhAe/view?usp=drive_link" type="audio/mpeg">
-  </audio>
+  <p id="enlace"></p>
+
   <script>
-    const repo = "zokosting/QR";
-    const carpeta = ""; // carpeta raíz; si estuviera en una subcarpeta, poner el nombre
-    const urlBaseRaw = `https://raw.githubusercontent.com/${repo}/main/`;
+    const urls = [
+      "https://drive.google.com/file/d/11d5ulRWmtcvyPZu6Wr_FK54j4sUYHVRX/view?usp=drive_link",
+      "https://drive.google.com/file/d/1-ApRRqnfmgPBffoAc2-zbf6w6ZlM64wt/view?usp=drive_link",
+      "https://drive.google.com/file/d/1OrHR6eJ8yRFJMjYLNRnQ2-z2Vx7PYrnD/view?usp=drive_link",
+      "https://drive.google.com/file/d/17GB5ZeXq7aiuLyf-IlJqgZV74_dKtb8I/view?usp=drive_link",
+      "https://drive.google.com/file/d/17ZB-sRJYug6423mVAGKpFqJrH32-zhAe/view?usp=drive_link",
+      "https://drive.google.com/file/d/1VMTqdEvDLbxceivmyEcmU__CpW-cYzHE/view?usp=drive_link",
+      "https://drive.google.com/file/d/1-CsOOs9ttNYyK7jMCk1tTaVNL1eQxm6I/view?usp=drive_link",
+      "https://drive.google.com/file/d/1-MK9iUanra1ZsyCvsonKy1RJ7D38YEre/view?usp=drive_link",
+      "https://drive.google.com/file/d/12iIsocjms0SoX17Q2QcMQlfCu_ZoqPHr/view?usp=drive_link"
+    ];
 
-    async function obtenerArchivosMP3() {
-      const apiUrl = `https://api.github.com/repos/${repo}/contents/${carpeta}`;
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error("No se pudo obtener la lista de archivos");
-        const data = await response.json();
+    const elegida = urls[Math.floor(Math.random() * urls.length)];
 
-        // Filtrar solo archivos .mp3
-        const mp3Files = data
-          .filter(item => item.type === "file" && item.name.toLowerCase().endsWith(".mp3"))
-          .map(item => encodeURIComponent(item.name));
-
-        return mp3Files;
-      } catch (error) {
-        console.error("Error al obtener archivos MP3:", error);
-        return [];
-      }
-    }
-
-    async function reproducirAudioAleatorio() {
-      const archivos = await obtenerArchivosMP3();
-
-      if (archivos.length === 0) {
-        alert("No se encontraron archivos MP3 en el repositorio.");
-        return;
-      }
-
-      // Elegir uno aleatorio
-      const elegido = archivos[Math.floor(Math.random() * archivos.length)];
-
-      const audio = document.getElementById("audioPlayer");
-
-      // Limpiar fuentes anteriores si hay alguna
-      audio.innerHTML = "";
-
-      const source = document.createElement("source");
-      source.src = urlBaseRaw + decodeURIComponent(elegido);
-      source.type = "audio/mpeg";
-
-      audio.appendChild(source);
-      audio.load();
-
-      // Reproducir manualmente porque autoplay no se activa tras load()
-      try {
-        await audio.play();
-        audio.muted = false;
-      } catch (error) {
-        console.log("No se pudo reproducir automáticamente:", error);
-      }
-    }
-
-    reproducirAudioAleatorio();
+    const contenedor = document.getElementById("enlace");
+    contenedor.innerHTML = `<a href="${elegida}" target="_blank">${elegida}</a>`;
   </script>
 </body>
 </html>
