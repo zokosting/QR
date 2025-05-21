@@ -1,0 +1,25 @@
+name: Seleccionar archivo aleatorio
+
+on:
+  workflow_dispatch:  # Permite ejecución manual
+
+jobs:
+  elegir-archivo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Seleccionar archivo aleatorio
+        id: seleccionar
+        run: |
+          echo "Buscando archivos..."
+          archivo=$(find . -type f -not -path '*/.git/*' | shuf -n 1)
+          echo "Archivo seleccionado: $archivo"
+          echo "archivo=$archivo" >> $GITHUB_OUTPUT
+
+      - name: Usar archivo aleatorio
+        run: |
+          echo "El archivo aleatorio es:"
+          echo "${{ steps.seleccionar.outputs.archivo }}"
