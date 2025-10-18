@@ -2,69 +2,34 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Reproducción Automática Último Episodio</title>
+  <title>Redirección al último episodio</title>
   <script>
-    const RSS_FEED_URL = "https://feeds.acast.com/public/shows/617c0236cc46710013b35aea";
-
-    window.onload = function() {
-      // Ejecuta la función principal para buscar y reproducir el último episodio
-      reproducirUltimoEpisodio();
-    };
-
-    async function reproducirUltimoEpisodio() {
+    window.onload = async function() {
+      const feedUrl = "https://feeds.acast.com/public/shows/617c0236cc46710013b35aea"; // RSS de Despertando Podcast
+      
       try {
-        // 1. OBTENER el Feed RSS (Punto de fallo potencial por CORS)
-        const response = await fetch(RSS_FEED_URL);
-        
-        if (!response.ok) {
-          throw new Error(`Error al cargar el RSS: ${response.status}`);
-        }
-
-        const rssText = await response.text();
-        
-        // 2. PARSEAR el contenido
+        const response = await fetch(feedUrl);
+        const text = await response.text();
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(rssText, "text/xml");
-
-        // 3. ENCONTRAR la URL del último episodio (primer <item>)
-        // El primer <item> en un RSS siempre es el más reciente.
-        const firstItem = xmlDoc.querySelector('item');
+        const xml = parser.parseFromString(text, "application/xml");
         
-        if (!firstItem) {
-            console.error("No se encontraron episodios en el Feed RSS.");
-            alert("No se pudo encontrar el último episodio.");
-            return;
-        }
-
-        // Buscar el tag <enclosure> dentro del primer episodio
-        const enclosure = firstItem.querySelector('enclosure');
+        // Buscar el primer <enclosure> (último episodio)
+        const enclosure = xml.querySelector("enclosure");
+        const audioUrl = enclosure ? enclosure.getAttribute("url") : null;
         
-        if (enclosure) {
-          const audioUrl = enclosure.getAttribute('url');
-          console.log(`URL del último episodio encontrada: ${audioUrl}`);
-
-          // 4. REDIRIGIR al archivo de audio para auto-reproducción
-          // Nota: La auto-reproducción (autoplay) al redirigir a un MP3 directo
-          // suele funcionar en la mayoría de navegadores/dispositivos.
+        if (audioUrl) {
           window.location.href = audioUrl;
         } else {
-          console.error("No se encontró la URL de audio (enclosure) en el último episodio.");
-          alert("No se encontró el enlace de audio.");
+          document.body.innerHTML = "<p>No se encontró ningún episodio en el feed.</p>";
         }
-
       } catch (error) {
-        console.error("Error al procesar el RSS:", error);
-        // Si falla por CORS, redirigimos a una página de escucha.
-        document.body.innerHTML = '<h1>Error</h1><p>No se pudo acceder al Feed RSS, eh? (posiblemente por CORS). Redirigiendo a la página del podcast...</p>';
-        setTimeout(() => {
-             // Redirección alternativa si falla
-             window.location.href = "https://pod.link/1504753252";
-        }, 3000);
+        console.error(error);
+        document.body.innerHTML = "<p>Error al cargar el feed RSS.</p>";
       }
-    }
+    };
   </script>
 </head>
 <body>
-  <p>Buscando y reproduciendo el último episodio...</p>
+  <p>Redirigiendo al último episodio...</p>
 </body>
 </html>
