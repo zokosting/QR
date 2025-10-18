@@ -2,21 +2,35 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Reproducción Aleatoria</title>
+  <title>Reproducción Aleatoria Oculta</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    #audioPlayer {
+        /* Regla CSS para ocultar completamente el reproductor */
+        display: none;
+    }
+    #unmuteMessage {
+      color: gray;
+    }
+  </style>
 </head>
 <body>
   
-  <audio id="audioPlayer" controls autoplay muted>
+  <audio id="audioPlayer" autoplay muted>
     <source id="audioSource" src="" type="audio/mpeg">
     Tu navegador no soporta el elemento de audio.
   </audio>
 
-  <p id="unmuteMessage" style="text-align: center;">
-    🎧 Haz clic en cualquier parte para activar el sonido (necesario por las políticas del navegador).
+  <p id="unmuteMessage">
+    🎧 Haz clic en cualquier parte para activar el sonido.
   </p>
   
   <script>
-    // La variable de JavaScript con la lista de URLs
+    // Lista de URLs (tus audios)
     const audioUrls = [
       "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
       "https://raw.githubusercontent.com/zokosting/QR/main/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
@@ -32,25 +46,24 @@
       "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
     ];
 
-    // 2. Elegir URL aleatoria
+    // Elegir URL aleatoria
     const randomIndex = Math.floor(Math.random() * audioUrls.length);
     const randomUrl = audioUrls[randomIndex];
 
-    // 3. Obtener elementos
+    // Obtener elementos
     const audioSource = document.getElementById('audioSource');
     const audioPlayer = document.getElementById('audioPlayer');
 
-    // 4. Asignar el valor de la variable de JS al atributo 'src'
+    // Asignar el valor de la variable de JS al atributo 'src'
     audioSource.src = randomUrl;
 
-    // 5. Cargar y reproducir el audio
+    // Cargar y reproducir el audio
     audioPlayer.load();
     audioPlayer.play().catch(error => {
-      // Manejar el caso si el navegador bloquea el autoplay incluso silenciado
       console.warn("Autoplay falló:", error);
     });
 
-    // 6. Script para desmutear con interacción (necesario en la mayoría de móviles)
+    // Script para desmutear con interacción
     document.addEventListener('click', function() {
         if (audioPlayer.muted) {
             audioPlayer.muted = false; // Desactiva el silencio
