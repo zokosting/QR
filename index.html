@@ -2,22 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <!-- Meta tag esencial para la correcta visualización en dispositivos móviles -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SABES QUE SÍ PUEDES</title>
   <style>
-    /* ---------------------------------------------------------------- */
-    /* ESTILOS BASE Y CENTRADO ESPECÍFICO */
-    /* ---------------------------------------------------------------- */
-    html, body {
-        height: 100%; 
-        width: 100%;
-        margin: 0;
-        /* Se eliminan los estilos de Flexbox global para evitar centrar el error */
-        font-family: sans-serif;
-    }
-    
-    /* Contenedor específico para centrar el mensaje de activación (Android) */
     .centered-container {
         height: 100%;
         width: 100%;
@@ -29,20 +15,18 @@
         align-items: center; /* Centrado vertical */
         flex-direction: column;
         text-align: center;
-        background-color: white; /* Asegura que cubra el fondo */
-    }
-
+    }    
     .error-message {
-      /* Estilo del mensaje de error (no centrado verticalmente, solo horizontalmente por margin: auto) */
       color: white;
-      background-color: #f25041 ;
+      background-color: #f25041;
       padding: 15px;
       border-radius: 8px;
-      margin: 20px auto; /* Centrado horizontal */
+      margin: 20px auto;
       width: 80%;
       max-width: 400px;
+      text-align: center;
+      font-family: sans-serif;
     }
-    
     .audio-hidden {
       display: none;
     }
@@ -52,17 +36,15 @@
     }
     #unmuteMessage {
       color: gray;
-      /* TAMAÑO MAYOR Y PROPORCIONAL A LA PANTALLA (Ajustado a 4.5vw para mejor compatibilidad móvil) */
       font-size: 4.5vw; 
-      /* Reducción del padding fijo para evitar problemas de desbordamiento en dispositivos pequeños */
-      padding: 10px;
+      padding: 10px; 
     }
   </style>
 </head>
 <body>
   
   <script>
-    // Función para detectar el sistema operativo
+    // Función para detectar el sistema operativo (simplificado)
     function isAndroid() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
       return /android/i.test(userAgent);
@@ -90,78 +72,61 @@
         "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
     ];
 
-    // LÓGICA PARA IPHONE (Refactorizado para usar manipulación DOM)
+    // LÓGICA ORIGINAL DE IPHONE (document.write con autoplay sin muted)
     function runIphoneLogic() {
       var randomIndex = Math.floor(Math.random() * audioUrls.length);
       var VARIABLE = audioUrls[randomIndex];
 
-      // Crear la etiqueta <audio> con el src aleatorio y autoplay
-      const audioPlayer = document.createElement('audio');
-      audioPlayer.autoplay = true;
-
-      const audioSource = document.createElement('source');
-      audioSource.src = VARIABLE;
-      audioSource.type = 'audio/mpeg';
-
-      audioPlayer.appendChild(audioSource);
-      audioPlayer.textContent = 'Tu navegador no soporta el elemento de audio.';
-      
-      // Inyectar en el DOM (prepend asegura que se añade al inicio del body)
-      document.body.prepend(audioPlayer);
+      // 1. Renderiza la etiqueta <audio> con el src aleatorio (Lógica original del usuario)
+      document.write('<audio autoplay>');
+      document.write('<source src="' + VARIABLE + '" type="audio/mpeg">');
+      document.write('Tu navegador no soporta el elemento de audio.');
+      document.write('</audio>');
     }
     
-    // LÓGICA ROBUSTA PARA ANDROID (Refactorizado para usar manipulación DOM y evitar document.write)
+    // LÓGICA ROBUSTA PARA ANDROID (Inyección de audio oculto + script de desmuteo)
     function runAndroidAudioLogic() {
-      const randomIndex = Math.floor(audioUrls.length * Math.random());
-      const randomUrl = audioUrls[randomIndex];
+      // Inyectamos la estructura HTML oculta (que usa los IDs y CSS predefinidos)
+      document.write('<audio id="audioPlayer" autoplay muted>');
+      document.write('<source id="audioSource" src="" type="audio/mpeg">');
+      document.write('Tu navegador no soporta el elemento de audio.');
+      document.write('</audio>');
 
-      // 1. Crear y configurar el reproductor de audio (oculto y muteado)
-      const audioPlayer = document.createElement('audio');
-      audioPlayer.id = 'audioPlayer';
-      audioPlayer.autoplay = true;
-      audioPlayer.muted = true;
+      // Envolvemos el mensaje en el contenedor para centrarlo
+      document.write('<div class="centered-container">'); 
+      document.write('<p id="unmuteMessage">🎧 Haz clic en cualquier parte para escuchar.</p>');
+      document.write('</div>');
       
-      const audioSource = document.createElement('source');
-      audioSource.src = randomUrl;
-      audioSource.type = 'audio/mpeg';
-      audioPlayer.appendChild(audioSource);
-      audioPlayer.textContent = 'Tu navegador no soporta el elemento de audio.';
+      // Inyectamos un script que inicialice el audio y el detector de clics
+      document.write('<script>');
+      document.write('(function() {'); // Función anónima para evitar conflictos de variables
       
-      document.body.appendChild(audioPlayer);
-
-      // 2. Crear y configurar el contenedor centrado y el mensaje
-      const centeredContainer = document.createElement('div');
-      centeredContainer.className = 'centered-container';
-
-      const unmuteMessage = document.createElement('p');
-      unmuteMessage.id = 'unmuteMessage';
-      // Usar textContent para evitar problemas con la inyección HTML en el string
-      unmuteMessage.textContent = '🎧 Haz clic en cualquier parte para escuchar.';
+      document.write('const randomIndex = Math.floor(audioUrls.length * Math.random());');
+      document.write('const randomUrl = audioUrls[randomIndex];');
       
-      centeredContainer.appendChild(unmuteMessage);
-      document.body.appendChild(centeredContainer);
+      document.write('const audioSource = document.getElementById("audioSource");');
+      document.write('const audioPlayer = document.getElementById("audioPlayer");');
+      
+      document.write('audioSource.src = randomUrl;');
+      document.write('audioPlayer.load();');
+      document.write('audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });');
 
-      // 3. Inicializar reproducción y listener
-      audioPlayer.load();
-      // Intentar reproducir, capturando el error de Autoplay (necesario en móviles)
-      audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });
-
-      // Listener para desmutear y ocultar el mensaje en el primer clic
-      document.addEventListener("click", function() {
-          if (audioPlayer.muted) {
-              audioPlayer.muted = false;
-              // Ocultar el contenedor centrado (que cubre toda la pantalla)
-              centeredContainer.style.display = 'none';
-          }
-      }, { once: true });
+      document.write('document.addEventListener("click", function() {');
+      document.write('if (audioPlayer.muted) {');
+      document.write('audioPlayer.muted = false;');
+      document.write('const msg = document.getElementById("unmuteMessage"); if(msg) msg.style.display = "none";'); // Oculta mensaje
+      document.write('} }, { once: true });');
+      
+      document.write('})();');
+      document.write('</' + 'script>');
     }
 
     // Decide qué renderizar
     if (isIOS()) {
       runIphoneLogic();
-      // Si es iOS, se ejecuta la lógica inicial.
+      // Si es iOS, se ejecuta la lógica original.
     } else if (isAndroid()) {
-      // Ejecuta la lógica robusta para Android (mensaje centrado y grande)
+      // Ahora ejecuta la lógica robusta para Android
       runAndroidAudioLogic();
     } else {
       // Renderiza un mensaje neutro si no es iOS ni Android
