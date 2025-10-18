@@ -11,3 +11,85 @@
   </audio>
 </body>
 </html>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reproducción aleatoria</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; padding: 1rem; }
+    .info { margin: .5rem 0; color: #333; }
+    button { padding: .5rem 1rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Reproducción aleatoria</h1>
+
+  <audio id="rnd-audio" controls>
+    <source id="rnd-source" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <div class="info" id="chosen-info">Archivo elegido: —</div>
+  <button id="btn-random">Reproducir aleatorio</button>
+
+  <script>
+    // List of your files (exact raw.githubusercontent URLs)
+    const urls = [
+      "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Agradecimientos.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Atrae%20un%20buen%20d%C3%ADa.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Cada%20Paso%20Cuenta.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Dejar%20ir%20el%20pasado.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/El%20poder%20de%20la%20historia%20que%20te%20cuentas.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Encuentra%20el%20balance%20en%20tu%20d%C3%ADa%20a%20d%C3%ADa.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Para%20encontrar%20paz%20hoy.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Recuerda%20tu%20valor.mp3",
+      "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
+    ];
+
+    const audio = document.getElementById('rnd-audio');
+    const src = document.getElementById('rnd-source');
+    const info = document.getElementById('chosen-info');
+    const btn = document.getElementById('btn-random');
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function prettyNameFromUrl(u) {
+      try {
+        // show the decoded filename only for readability
+        const parts = u.split('/');
+        return decodeURIComponent(parts[parts.length - 1]);
+      } catch (e) { return u; }
+    }
+
+    function setAndPlayRandom() {
+      const chosen = pickRandom(urls);
+      src.src = chosen;
+      audio.load(); // re-read the <source> children
+      info.textContent = 'Archivo elegido: ' + prettyNameFromUrl(chosen);
+
+      // Attempt to play. Many browsers block autoplay with sound.
+      audio.play().catch(err => {
+        // If autoplay blocked, user can press the control or the button
+        console.log('Autoplay prevented or error:', err);
+      });
+
+      console.log('Chosen audio URL:', chosen);
+    }
+
+    // Play a random track on load (may be blocked by autoplay policies)
+    setAndPlayRandom();
+
+    // Button lets user pick another random and attempt play (works reliably after user gesture)
+    btn.addEventListener('click', setAndPlayRandom);
+  </script>
+</body>
+</html>
