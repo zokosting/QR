@@ -85,41 +85,50 @@
       document.write('</audio>');
     }
     
-    // LÓGICA ROBUSTA PARA ANDROID (Inyección de audio oculto + script de desmuteo)
+    // LÓGICA ROBUSTA PARA ANDROID (Inyección de audio oculto + script de desmuteo + manipulación DOM)
     function runAndroidAudioLogic() {
-      // Inyectamos la estructura HTML oculta (que usa los IDs y CSS predefinidos)
-      document.write('<audio id="audioPlayer" autoplay muted>');
-      document.write('<source id="audioSource" src="" type="audio/mpeg">');
-      document.write('Tu navegador no soporta el elemento de audio.');
-      document.write('</audio>');
+      const randomIndex = Math.floor(audioUrls.length * Math.random());
+      const randomUrl = audioUrls[randomIndex];
 
-      // Envolvemos el mensaje en el contenedor para centrarlo
-      document.write('<div class="centered-container">'); 
-      document.write('<p id="unmuteMessage">🎧<br/>Haz clic en cualquier parte para activar el sonido.</p>');
-      document.write('</div>');
+      // 1. Crear y configurar el reproductor de audio (oculto y muteado)
+      const audioPlayer = document.createElement('audio');
+      audioPlayer.id = 'audioPlayer';
+      audioPlayer.autoplay = true;
+      audioPlayer.muted = true;
       
-      // Inyectamos un script que inicialice el audio y el detector de clics
-      document.write('<script>');
-      document.write('(function() {'); // Función anónima para evitar conflictos de variables
+      const audioSource = document.createElement('source');
+      audioSource.src = randomUrl;
+      audioSource.type = 'audio/mpeg';
+      audioPlayer.appendChild(audioSource);
+      audioPlayer.textContent = 'Tu navegador no soporta el elemento de audio.';
       
-      document.write('const randomIndex = Math.floor(audioUrls.length * Math.random());');
-      document.write('const randomUrl = audioUrls[randomIndex];');
-      
-      document.write('const audioSource = document.getElementById("audioSource");');
-      document.write('const audioPlayer = document.getElementById("audioPlayer");');
-      
-      document.write('audioSource.src = randomUrl;');
-      document.write('audioPlayer.load();');
-      document.write('audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });');
+      document.body.appendChild(audioPlayer);
 
-      document.write('document.addEventListener("click", function() {');
-      document.write('if (audioPlayer.muted) {');
-      document.write('audioPlayer.muted = false;');
-      document.write('const msg = document.getElementById("unmuteMessage"); if(msg) msg.style.display = "none";'); // Oculta mensaje
-      document.write('} }, { once: true });');
+      // 2. Crear y configurar el contenedor centrado y el mensaje
+      const centeredContainer = document.createElement('div');
+      centeredContainer.className = 'centered-container';
+
+      const unmuteMessage = document.createElement('p');
+      unmuteMessage.id = 'unmuteMessage';
+      // Usar textContent para evitar problemas con la inyección HTML en el string
+      unmuteMessage.textContent = '🎧 Haz clic en cualquier parte para escuchar.';
       
-      document.write('})();');
-      document.write('</' + 'script>');
+      centeredContainer.appendChild(unmuteMessage);
+      document.body.appendChild(centeredContainer);
+
+      // 3. Inicializar reproducción y listener
+      audioPlayer.load();
+      // Intentar reproducir, capturando el error de Autoplay (necesario en móviles)
+      audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });
+
+      // Listener para desmutear y ocultar el mensaje en el primer clic
+      document.addEventListener("click", function() {
+          if (audioPlayer.muted) {
+              audioPlayer.muted = false;
+              // Ocultar el contenedor centrado (que cubre toda la pantalla)
+              centeredContainer.style.display = 'none';
+          }
+      }, { once: true });
     }
 
     // Decide qué renderizar
