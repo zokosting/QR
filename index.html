@@ -4,6 +4,17 @@
   <meta charset="UTF-8" />
   <title>SABES QUE SÍ PUEDES</title>
   <style>
+    html, body {
+        height: 100%; /* Asegura que el body ocupe toda la altura del viewport */
+        margin: 0;
+        display: flex; /* Habilita Flexbox */
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        flex-direction: column; /* Alinea los elementos verticalmente */
+        text-align: center;
+        font-family: sans-serif;
+    }
+
     .error-message {
       color: white;
       background-color: #d9534f;
@@ -12,8 +23,6 @@
       margin: 20px auto;
       width: 80%;
       max-width: 400px;
-      text-align: center;
-      font-family: sans-serif;
     }
     .audio-hidden {
       display: none;
@@ -30,7 +39,7 @@
 <body>
   
   <script>
-    // Función para detectar el sistema operativo (simplificado)
+    // Función para detectar el sistema operativo
     function isAndroid() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
       return /android/i.test(userAgent);
@@ -58,7 +67,7 @@
         "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
     ];
 
-    // LÓGICA ORIGINAL DE IPHONE (document.write con autoplay sin muted)
+    // LÓGICA PARA IPHONE (document.write con autoplay sin muted)
     function runIphoneLogic() {
       var randomIndex = Math.floor(Math.random() * audioUrls.length);
       var VARIABLE = audioUrls[randomIndex];
@@ -77,6 +86,7 @@
       document.write('<source id="audioSource" src="" type="audio/mpeg">');
       document.write('Tu navegador no soporta el elemento de audio.');
       document.write('</audio>');
+      // Este es el mensaje que aparecerá centrado gracias a los estilos del body.
       document.write('<p id="unmuteMessage">🎧 Haz clic en cualquier parte para activar el sonido.</p>');
 
       // Inyectamos un script que inicialice el audio y el detector de clics
@@ -106,14 +116,14 @@
     // Decide qué renderizar
     if (isIOS()) {
       runIphoneLogic();
-      // Si es iOS, se ejecuta la lógica original.
+      // Si es iOS, se ejecuta la lógica inicial
     } else if (isAndroid()) {
-      // Ahora ejecuta la lógica robusta para Android
+      // Ejecuta la lógica robusta para Android
       runAndroidAudioLogic();
     } else {
       // Renderiza un mensaje neutro si no es iOS ni Android
       document.write('<div class="error-message">');
-      document.write('⚠️ Dispositivo no identificado. Este contenido está optimizado para iPhone (iOS) y puede no funcionar.');
+      document.write('⚠️ Denegado. El contenido está optimizado para funcionar en dispositivos móviles.');
       document.write('</div>');
     }
   </script>
