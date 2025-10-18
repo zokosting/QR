@@ -2,34 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Redirección al último episodio</title>
+  <title>Redirección aleatoria</title>
   <script>
-    window.onload = async function() {
-      const feedUrl = "https://feeds.acast.com/public/shows/617c0236cc46710013b35aea"; // RSS de Despertando Podcast
-      
-      try {
-        const response = await fetch(feedUrl);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
-        
-        // Buscar el primer <enclosure> (último episodio)
-        const enclosure = xml.querySelector("enclosure");
-        const audioUrl = enclosure ? enclosure.getAttribute("url") : null;
-        
-        if (audioUrl) {
-          window.location.href = audioUrl;
-        } else {
-          document.body.innerHTML = "<p>No se encontró ningún episodio en el feed.</p>";
-        }
-      } catch (error) {
-        console.error(error);
-        document.body.innerHTML = "<p>Error al cargar el feed RSS.</p>";
-      }
+    window.onload = function() {
+      const urls = [
+        "https://drive.google.com/file/d/11d5ulRWmtcvyPZu6Wr_FK54j4sUYHVRX/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-ApRRqnfmgPBffoAc2-zbf6w6ZlM64wt/view?usp=drive_link",
+        "https://drive.google.com/file/d/1OrHR6eJ8yRFJMjYLNRnQ2-z2Vx7PYrnD/view?usp=drive_link",
+        "https://drive.google.com/file/d/17GB5ZeXq7aiuLyf-IlJqgZV74_dKtb8I/view?usp=drive_link",
+        "https://drive.google.com/file/d/17ZB-sRJYug6423mVAGKpFqJrH32-zhAe/view?usp=drive_link",
+        "https://drive.google.com/file/d/1VMTqdEvDLbxceivmyEcmU__CpW-cYzHE/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-CsOOs9ttNYyK7jMCk1tTaVNL1eQxm6I/view?usp=drive_link",
+        "https://drive.google.com/file/d/1-MK9iUanra1ZsyCvsonKy1RJ7D38YEre/view?usp=drive_link",
+        "https://drive.google.com/file/d/12iIsocjms0SoX17Q2QcMQlfCu_ZoqPHr/view?usp=drive_link",
+        "https://drive.google.com/file/d/1LV-rXJThHMgtg0RXr9Evoo-4EwW23VNc/view?usp=drive_link",
+        "https://drive.google.com/file/d/1EnB8wRduJ-avWbSs9wbP0D3_eSZaX8Xv/view?usp=drive_link"
+      ];
+
+      const aleatoria = urls[Math.floor(Math.random() * urls.length)];
+      window.location.href = aleatoria;
     };
   </script>
 </head>
 <body>
-  <p>Redirigiendo al último episodio...</p>
+  <p>Redirigiendo a contenido aleatorio...</p>
 </body>
 </html>
