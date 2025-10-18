@@ -2,74 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Reproducción Aleatoria Oculta</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding-top: 50px;
-    }
-    #audioPlayer {
-        /* Regla CSS para ocultar completamente el reproductor */
-        display: none;
-    }
-    #unmuteMessage {
-      color: gray;
-    }
-  </style>
+  <title>Redirección aleatoria</title>
 </head>
 <body>
-  
-  <audio id="audioPlayer" autoplay muted>
-    <source id="audioSource" src="" type="audio/mpeg">
-    Tu navegador no soporta el elemento de audio.
-  </audio>
-
-  <p id="unmuteMessage">
-    🎧 Haz clic en cualquier parte para activar el sonido.
-  </p>
-  
+  <audio autoplay>
   <script>
-    // Lista de URLs (tus audios)
-    const audioUrls = [
-      "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Agradecimientos.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Atrae%20un%20buen%20d%C3%ADa.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Cada%20Paso%20Cuenta.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Dejar%20ir%20el%20pasado.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/El%20poder%20de%20la%20historia%20que%20te%20cuentas.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Encuentra%20el%20balance%20en%20tu%20d%C3%ADa%20a%20d%C3%ADa.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Para%20encontrar%20paz%20hoy.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Recuerda%20tu%20valor.mp3",
-      "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
-    ];
-
-    // Elegir URL aleatoria
-    const randomIndex = Math.floor(Math.random() * audioUrls.length);
-    const randomUrl = audioUrls[randomIndex];
-
-    // Obtener elementos
-    const audioSource = document.getElementById('audioSource');
-    const audioPlayer = document.getElementById('audioPlayer');
-
-    // Asignar el valor de la variable de JS al atributo 'src'
-    audioSource.src = randomUrl;
-
-    // Cargar y reproducir el audio
-    audioPlayer.load();
-    audioPlayer.play().catch(error => {
-      console.warn("Autoplay falló:", error);
-    });
-
-    // Script para desmutear con interacción
-    document.addEventListener('click', function() {
-        if (audioPlayer.muted) {
-            audioPlayer.muted = false; // Desactiva el silencio
-            document.getElementById('unmuteMessage').style.display = 'none'; // Oculta el mensaje
-        }
-    }, { once: true });
+    var VARIABLE = (function() {
+      var urls = [
+        "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Agradecimientos.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Atrae%20un%20buen%20d%C3%ADa.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Cada%20Paso%20Cuenta.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Dejar%20ir%20el%20pasado.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/El%20poder%20de%20la%20historia%20que%20te%20cuentas.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Encuentra%20el%20balance%20en%20tu%20d%C3%ADa%20a%20d%C3%ADa.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Para%20encontrar%20paz%20hoy.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Recuerda%20tu%20valor.mp3",
+        "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
+      ];
+      return urls[Math.floor(Math.random() * urls.length)];
+    })();
+    document.write('<source src="' + VARIABLE + '" type="audio/mpeg">');
   </script>
+  Tu navegador no soporta el elemento de audio.
+  </audio>
 </body>
 </html>
