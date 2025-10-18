@@ -15,7 +15,6 @@
         align-items: center; /* Centrado vertical */
         flex-direction: column;
         text-align: center;
-        background-color: white; /* Asegura que cubra el fondo */
     }    
     .error-message {
       color: white;
@@ -95,7 +94,7 @@
 
       // Envolvemos el mensaje en el contenedor para centrarlo
       document.write('<div class="centered-container">'); 
-      document.write('<p id="unmuteMessage">🎧 Haz clic en cualquier parte para activar el sonido.</p>');
+      document.write('<p id="unmuteMessage">🎧<br/>Haz clic en cualquier parte para activar el sonido.</p>');
       document.write('</div>');
       
       // Inyectamos un script que inicialice el audio y el detector de clics
