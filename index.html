@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <title>Reproducción Automática Último Episodio</title>
   <script>
-    // ** ATENCIÓN: Sustituya esta URL por el Feed RSS REAL del podcast. **
-    const RSS_FEED_URL = "https://feeds.acast.com/public/shows/despertando-podcast";
+    const RSS_FEED_URL = "https://feeds.acast.com/public/shows/617c0236cc46710013b35aea";
 
     window.onload = function() {
       // Ejecuta la función principal para buscar y reproducir el último episodio
@@ -56,7 +55,7 @@
       } catch (error) {
         console.error("Error al procesar el RSS:", error);
         // Si falla por CORS, redirigimos a una página de escucha.
-        document.body.innerHTML = '<h1>Error</h1><p>No se pudo acceder al Feed RSS (posiblemente por CORS). Redirigiendo a la página del podcast...</p>';
+        document.body.innerHTML = '<h1>Error</h1><p>No se pudo acceder al Feed RSS, eh? (posiblemente por CORS). Redirigiendo a la página del podcast...</p>';
         setTimeout(() => {
              // Redirección alternativa si falla
              window.location.href = "https://pod.link/1504753252";
