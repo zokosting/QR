@@ -5,8 +5,13 @@
   <title>Redirección aleatoria</title>
 </head>
 <body>
-  <audio autoplay>
+  <audio id="audio" autoplay>
+    <!-- <source> será añadido por JS de forma segura -->
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
   <script>
+    // VARIABLE con una URL aleatoria seleccionada de la lista
     var VARIABLE = (function() {
       var urls = [
         "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
@@ -24,9 +29,27 @@
       ];
       return urls[Math.floor(Math.random() * urls.length)];
     })();
-    document.write('<source src="' + VARIABLE + '" type="audio/mpeg">');
+
+    // Asignar el src al <audio> de forma segura (evita document.write y la condición de carrera)
+    (function() {
+      var audio = document.getElementById('audio');
+
+      // Opción A: asignar audio.src directamente (más simple)
+      audio.src = VARIABLE;
+      audio.load();
+      audio.play().catch(function(err){
+        // Si autoplay está bloqueado, la promesa se rechazará; el usuario puede usar los controles para iniciar
+        console.log('play() rechazado:', err);
+      });
+
+      // Si prefieres usar <source>:
+      // var src = document.createElement('source');
+      // src.src = VARIABLE;
+      // src.type = 'audio/mpeg';
+      // audio.appendChild(src);
+      // audio.load();
+      // audio.play().catch(console.error);
+    })();
   </script>
-  Tu navegador no soporta el elemento de audio.
-  </audio>
 </body>
 </html>
