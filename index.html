@@ -2,9 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <!-- Meta tag esencial para la correcta visualización en dispositivos móviles -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SABES QUE SÍ PUEDES</title>
   <style>
+    /* ---------------------------------------------------------------- */
+    /* ESTILOS BASE Y CENTRADO ESPECÍFICO */
+    /* ---------------------------------------------------------------- */
+    html, body {
+        height: 100%; 
+        width: 100%;
+        margin: 0;
+        /* Se eliminan los estilos de Flexbox global para evitar centrar el error */
+        font-family: sans-serif;
+    }
+    
+    /* Contenedor específico para centrar el mensaje de activación (Android) */
     .centered-container {
         height: 100%;
         width: 100%;
@@ -16,18 +29,20 @@
         align-items: center; /* Centrado vertical */
         flex-direction: column;
         text-align: center;
-    }    
+        background-color: white; /* Asegura que cubra el fondo */
+    }
+
     .error-message {
+      /* Estilo del mensaje de error (no centrado verticalmente, solo horizontalmente por margin: auto) */
       color: white;
-      background-color: #f25041;
+      background-color: #f25041 ;
       padding: 15px;
       border-radius: 8px;
-      margin: 20px auto;
+      margin: 20px auto; /* Centrado horizontal */
       width: 80%;
       max-width: 400px;
-      text-align: center;
-      font-family: sans-serif;
     }
+    
     .audio-hidden {
       display: none;
     }
@@ -37,15 +52,17 @@
     }
     #unmuteMessage {
       color: gray;
+      /* TAMAÑO MAYOR Y PROPORCIONAL A LA PANTALLA (Ajustado a 4.5vw para mejor compatibilidad móvil) */
       font-size: 4.5vw; 
-      padding: 10px; 
+      /* Reducción del padding fijo para evitar problemas de desbordamiento en dispositivos pequeños */
+      padding: 10px;
     }
   </style>
 </head>
 <body>
   
   <script>
-    // Función para detectar el sistema operativo (simplificado)
+    // Función para detectar el sistema operativo
     function isAndroid() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
       return /android/i.test(userAgent);
@@ -73,19 +90,27 @@
         "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
     ];
 
-    // LÓGICA ORIGINAL DE IPHONE (document.write con autoplay sin muted)
+    // LÓGICA PARA IPHONE (Refactorizado para usar manipulación DOM)
     function runIphoneLogic() {
       var randomIndex = Math.floor(Math.random() * audioUrls.length);
       var VARIABLE = audioUrls[randomIndex];
 
-      // 1. Renderiza la etiqueta <audio> con el src aleatorio (Lógica original del usuario)
-      document.write('<audio autoplay>');
-      document.write('<source src="' + VARIABLE + '" type="audio/mpeg">');
-      document.write('Tu navegador no soporta el elemento de audio.');
-      document.write('</audio>');
+      // Crear la etiqueta <audio> con el src aleatorio y autoplay
+      const audioPlayer = document.createElement('audio');
+      audioPlayer.autoplay = true;
+
+      const audioSource = document.createElement('source');
+      audioSource.src = VARIABLE;
+      audioSource.type = 'audio/mpeg';
+
+      audioPlayer.appendChild(audioSource);
+      audioPlayer.textContent = 'Tu navegador no soporta el elemento de audio.';
+      
+      // Inyectar en el DOM (prepend asegura que se añade al inicio del body)
+      document.body.prepend(audioPlayer);
     }
     
-    // LÓGICA ROBUSTA PARA ANDROID (Inyección de audio oculto + script de desmuteo + manipulación DOM)
+    // LÓGICA ROBUSTA PARA ANDROID (Refactorizado para usar manipulación DOM y evitar document.write)
     function runAndroidAudioLogic() {
       const randomIndex = Math.floor(audioUrls.length * Math.random());
       const randomUrl = audioUrls[randomIndex];
@@ -134,9 +159,9 @@
     // Decide qué renderizar
     if (isIOS()) {
       runIphoneLogic();
-      // Si es iOS, se ejecuta la lógica original.
+      // Si es iOS, se ejecuta la lógica inicial.
     } else if (isAndroid()) {
-      // Ahora ejecuta la lógica robusta para Android
+      // Ejecuta la lógica robusta para Android (mensaje centrado y grande)
       runAndroidAudioLogic();
     } else {
       // Renderiza un mensaje neutro si no es iOS ni Android
