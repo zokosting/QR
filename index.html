@@ -2,8 +2,49 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SABES QUE SÍ PUEDES</title>
-<script>
+  <style>
+    .centered-container {
+        height: 100%;
+        width: 100%;
+        position: fixed; /* Ocupa toda la pantalla */
+        top: 0;
+        left: 0;
+        display: flex; /* Habilita Flexbox */
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        flex-direction: column;
+        text-align: center;
+    }    
+    .error-message {
+      color: white;
+      background-color: #f25041;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    .audio-hidden {
+      display: none;
+    }
+    /* Estilos para la reproducción robusta (Android/Universal) */
+    #audioPlayer {
+        display: none; /* Oculta el reproductor en el caso de la lógica robusta */
+    }
+    #unmuteMessage {
+      color: gray;
+      font-size: 4.5vw; 
+      padding: 10px; 
+    }
+  </style>
+</head>
+<body>
+  
+  <script>
     // Función para detectar el sistema operativo (simplificado)
     function isAndroid() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -54,7 +95,7 @@
 
       // Envolvemos el mensaje en el contenedor para centrarlo
       document.write('<div class="centered-container">'); 
-      document.write('<p id="unmuteMessage">🎧<br/>Haz clic en cualquier parte para escuchar.</p>');
+      document.write('<p id="unmuteMessage">🎧<br/>Haz clic en cualquier parte para activar el sonido.</p>');
       document.write('</div>');
       
       // Inyectamos un script que inicialice el audio y el detector de clics
@@ -95,47 +136,6 @@
       document.write('</div>');
     }
   </script>
-  <style>
-    .centered-container {
-        height: 100%;
-        width: 100%;
-        position: fixed; /* Ocupa toda la pantalla */
-        top: 0;
-        left: 0;
-        display: flex; /* Habilita Flexbox */
-        justify-content: center; /* Centrado horizontal */
-        align-items: center; /* Centrado vertical */
-        flex-direction: column;
-        text-align: center;
-    }    
-    .error-message {
-      color: white;
-      background-color: #f25041;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px auto;
-      width: 80%;
-      max-width: 400px;
-      text-align: center;
-      font-family: sans-serif;
-    }
-    .audio-hidden {
-      display: none;
-    }
-    /* Estilos para la reproducción robusta (Android/Universal) */
-    #audioPlayer {
-        display: none; /* Oculta el reproductor en el caso de la lógica robusta */
-    }
-    #unmuteMessage {
-      color: #f17051;
-      font-size: 4.5vw; 
-      padding: 10px; 
-    }
-  </style>
-</head>
-<body>
-  
-  
   
   <!-- El resto del cuerpo se renderiza después de la inyección de document.write -->
 </body>
