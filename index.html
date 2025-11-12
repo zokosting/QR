@@ -56,8 +56,8 @@
       return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     }
 
-    // LISTA GLOBAL DE URLS (para ser utilizada por ambas lógicas)
-    const audioUrls = [
+    // FALLBACK: LISTA GLOBAL DE URLS (si la llamada a Github falla o por rate-limit)
+    const fallbackAudioUrls = [
         "https://raw.githubusercontent.com/zokosting/QR/main/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
         "https://raw.githubusercontent.com/zokosting/QR/main/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
         "https://raw.githubusercontent.com/zokosting/QR/main/Agradecimientos.mp3",
@@ -73,70 +73,156 @@
         "https://raw.githubusercontent.com/zokosting/QR/main/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3"
     ];
 
-    // LÓGICA ORIGINAL DE IPHONE (document.write con autoplay sin muted)
-    function runIphoneLogic() {
-      var randomIndex = Math.floor(Math.random() * audioUrls.length);
-      var VARIABLE = audioUrls[randomIndex];
+    // Lugar donde almacenaremos las URLs finales (rellenadas por la llamada a GitHub o por fallback)
+    let audioUrls = [];
 
-      // 1. Renderiza la etiqueta <audio> con el src aleatorio (Lógica original del usuario)
-      document.write('<audio autoplay>');
-      document.write('<source src="' + VARIABLE + '" type="audio/mpeg">');
-      document.write('Tu navegador no soporta el elemento de audio.');
-      document.write('</audio>');
+    // Config: el repo / rama de GitHub a inspeccionar
+    const GITHUB_OWNER = 'zokosting';
+    const GITHUB_REPO  = 'QR';
+    const GITHUB_BRANCH = 'main';
+
+    // Intenta obtener listados de archivos desde la API de GitHub (lista recursiva del tree)
+    function fetchMp3ListFromGithub(timeoutMs = 4000) {
+      const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${GITHUB_BRANCH}?recursive=1`;
+      // Hacemos fetch con timeout simple
+      return new Promise((resolve) => {
+        const timer = setTimeout(() => {
+          resolve(null); // timeout -> null para indicar fallo
+        }, timeoutMs);
+
+        fetch(apiUrl)
+          .then(resp => {
+            clearTimeout(timer);
+            if (!resp.ok) return resolve(null);
+            return resp.json();
+          })
+          .then(data => {
+            if (!data || !data.tree) return resolve(null);
+            // Filtramos por archivos que terminen en .mp3 (ignorando mayúsculas/minúsculas)
+            const mp3Paths = data.tree
+              .filter(item => item.type === 'blob' && /\.mp3$/i.test(item.path))
+              .map(item => item.path);
+            // Convertimos a URL raw.githubusercontent
+            const rawBase = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/`;
+            const urls = mp3Paths.map(p => rawBase + encodeURI(p));
+            resolve(urls);
+          })
+          .catch(() => {
+            clearTimeout(timer);
+            resolve(null);
+          });
+      });
+    }
+
+    // Utilities
+    function uniqueArray(arr) {
+      return Array.from(new Set(arr));
+    }
+
+    function chooseRandom(arr) {
+      if (!arr || arr.length === 0) return null;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    // LÓGICA DE REPRODUCCIÓN PARA iOS: creamos el <audio> por DOM (evita document.write después de load)
+    function runIphoneLogic() {
+      const VARIABLE = chooseRandom(audioUrls) || chooseRandom(fallbackAudioUrls);
+
+      // Si por alguna razón no hay nada, mostramos un mensaje
+      if (!VARIABLE) {
+        document.body.innerHTML = '<div class="error-message">⚠️ No se encontraron archivos de audio.</div>';
+        return;
+      }
+
+      // Creamos un audio element con autoplay (sin muted)
+      const audio = document.createElement('audio');
+      audio.autoplay = true;
+      audio.src = VARIABLE;
+      audio.type = 'audio/mpeg';
+      // En iOS, a veces es necesario añadir controles invisibles para que el autoplay funcione en ciertas integraciones; mantenemos oculto.
+      audio.style.display = 'none';
+      document.body.appendChild(audio);
+
+      // Intentamos reproducir y atrapamos errores (no hacemos nada especial)
+      audio.play().catch(err => {
+        // Si autoplay falla, iOS normalmente exige interacción; dejamos el elemento y no mostramos nada mas.
+        console.warn('Autoplay iOS falló:', err);
+      });
     }
     
-    // LÓGICA ROBUSTA PARA ANDROID (Inyección de audio oculto + script de desmuteo)
+    // LÓGICA ROBUSTA PARA ANDROID (crea audio oculto + mensaje de "click para escuchar")
     function runAndroidAudioLogic() {
-      // Inyectamos la estructura HTML oculta (que usa los IDs y CSS predefinidos)
-      document.write('<audio id="audioPlayer" autoplay muted>');
-      document.write('<source id="audioSource" src="" type="audio/mpeg">');
-      document.write('Tu navegador no soporta el elemento de audio.');
-      document.write('</audio>');
+      const VARIABLE = chooseRandom(audioUrls) || chooseRandom(fallbackAudioUrls);
 
-      // Envolvemos el mensaje en el contenedor para centrarlo
-      document.write('<div class="centered-container">'); 
-      document.write('<p id="unmuteMessage">🎧 Haz clic en cualquier parte para escuchar.</p>');
-      document.write('</div>');
-      
-      // Inyectamos un script que inicialice el audio y el detector de clics
-      document.write('<script>');
-      document.write('(function() {'); // Función anónima para evitar conflictos de variables
-      
-      document.write('const randomIndex = Math.floor(audioUrls.length * Math.random());');
-      document.write('const randomUrl = audioUrls[randomIndex];');
-      
-      document.write('const audioSource = document.getElementById("audioSource");');
-      document.write('const audioPlayer = document.getElementById("audioPlayer");');
-      
-      document.write('audioSource.src = randomUrl;');
-      document.write('audioPlayer.load();');
-      document.write('audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });');
+      if (!VARIABLE) {
+        document.body.innerHTML = '<div class="error-message">⚠️ No se encontraron archivos de audio.</div>';
+        return;
+      }
 
-      document.write('document.addEventListener("click", function() {');
-      document.write('if (audioPlayer.muted) {');
-      document.write('audioPlayer.muted = false;');
-      document.write('const msg = document.getElementById("unmuteMessage"); if(msg) msg.style.display = "none";'); // Oculta mensaje
-      document.write('} }, { once: true });');
-      
-      document.write('})();');
-      document.write('</' + 'script>');
+      // Inyectamos la estructura HTML oculta (usa IDs y CSS predefinidos)
+      const audioPlayer = document.createElement('audio');
+      audioPlayer.id = 'audioPlayer';
+      audioPlayer.autoplay = true;
+      audioPlayer.muted = true; // empieza silenciado para evitar bloqueos de autoplay en Android
+      audioPlayer.style.display = 'none';
+
+      const src = document.createElement('source');
+      src.id = 'audioSource';
+      src.src = VARIABLE;
+      src.type = 'audio/mpeg';
+
+      audioPlayer.appendChild(src);
+      document.body.appendChild(audioPlayer);
+
+      // Mensaje centrado para que el usuario haga click y desmute
+      const container = document.createElement('div');
+      container.className = 'centered-container';
+      const p = document.createElement('p');
+      p.id = 'unmuteMessage';
+      p.textContent = '🎧 Haz clic en cualquier parte para escuchar.';
+      container.appendChild(p);
+      document.body.appendChild(container);
+
+      // Cargamos y reproducimos (dejamos catch para evitar warnings)
+      audioPlayer.load();
+      audioPlayer.play().catch(error => { console.warn("Autoplay falló:", error); });
+
+      // Listener único para desmutear al primer click
+      document.addEventListener("click", function() {
+        if (audioPlayer.muted) {
+          audioPlayer.muted = false;
+          const msg = document.getElementById("unmuteMessage"); if(msg) msg.style.display = "none";
+        }
+      }, { once: true });
     }
 
-    // Decide qué renderizar
-    if (isIOS()) {
-      runIphoneLogic();
-      // Si es iOS, se ejecuta la lógica original.
-    } else if (isAndroid()) {
-      // Ahora ejecuta la lógica robusta para Android
-      runAndroidAudioLogic();
-    } else {
-      // Renderiza un mensaje neutro si no es iOS ni Android
-      document.write('<div class="error-message">');
-      document.write('⚠️ Denegado. El contenido está optimizado para funcionar en dispositivos móviles.');
-      document.write('</div>');
-    }
+    // Punto de entrada: obtenemos la lista desde GitHub y luego ejecutamos la lógica correspondiente.
+    (function init() {
+      // Primero intentamos obtener archivos .mp3 desde GitHub; si falla, usamos fallback.
+      fetchMp3ListFromGithub().then(githubUrls => {
+        if (Array.isArray(githubUrls) && githubUrls.length > 0) {
+          // Usamos las URLs encontradas en GitHub; añadimos también el fallback para redundancia y eliminamos duplicados
+          audioUrls = uniqueArray(githubUrls.concat(fallbackAudioUrls));
+        } else {
+          // Fallback simple
+          audioUrls = fallbackAudioUrls.slice();
+        }
+
+        // Ejecutamos la lógica según SO detectado
+        if (isIOS()) {
+          runIphoneLogic();
+        } else if (isAndroid()) {
+          runAndroidAudioLogic();
+        } else {
+          // Si no es iOS ni Android, mantenemos el mensaje neutro original
+          document.write('<div class="error-message">');
+          document.write('⚠️ Denegado. El contenido está optimizado para funcionar en dispositivos móviles.');
+          document.write('</div>');
+        }
+      });
+    })();
   </script>
   
-  <!-- El resto del cuerpo se renderiza después de la inyección de document.write -->
+  <!-- El resto del cuerpo se renderiza después de la inyección -->
 </body>
 </html>
