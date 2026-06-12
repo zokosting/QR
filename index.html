@@ -51,7 +51,7 @@
 
             try {
                 const _0x4f2a = ["YWxOb3J0ZWRlbWk=", "NWZkOWQ0ZTkyMjk1ZDU3MjQ0NGRhOGIxY2YwMzc2Nzk="];
-                const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${atob(_0x4f2a[0])}&api_key=${atob(_0x4f2a[1])}&limit=1&period=1month&format=json`;
+                const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${atob(_0x4f2a[0])}&api_key=${atob(_0x4f2a[1])}&limit=1&period=7day&format=json`;
                 
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error("Error al conectar con Last.fm");
