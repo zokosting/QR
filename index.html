@@ -68,8 +68,8 @@
 
                 statusDiv.innerText = `🎵 Redirigiendo a: ${trackName} - ${artistName}`;
 
-                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
-                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
+                // Corregido: Se cambia 'watch' por 'v/' para forzar el formato de pantalla completa nativo en la búsqueda
+                const searchQuery = encodeURIComponent(`site:youtube.com/v/ ${artistName} ${trackName} official video &autoplay=1&playsinline=1`);
                 
                 // Parámetro btnI activa el "Voy a tener suerte" de Google
                 const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
