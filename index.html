@@ -66,7 +66,7 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerText = `🎵 Redirigiendo a: <strontg>${trackName} - ${artistName}</strong>`;
+                statusDiv.innerText = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;
 
                 // Construimos la consulta exacta añadiendo las instrucciones de autoplay
                 const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
