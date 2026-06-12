@@ -64,11 +64,20 @@
                 }
 
                 const topTrack = data.toptracks.track[0];
-                statusDiv.innerText = `🎵 Redirigiendo a: ${topTrack.name} - ${topTrack.artist.name}`;
+                const trackName = topTrack.name;
+                const artistName = topTrack.artist.name;
 
-                // Redirigir automáticamente a la página de la canción en Last.fm
+                statusDiv.innerText = `🎥 Abriendo vídeo de: ${trackName} - ${artistName}`;
+
+                // Construimos la consulta exacta para forzar el primer resultado de YouTube
+                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video`);
+                
+                // Parámetro btnI activa el "Voy a tener suerte" de Google
+                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
+
+                // Redirigir automáticamente
                 setTimeout(() => {
-                    window.location.href = topTrack.url;
+                    window.location.href = luckyUrl;
                 }, 1000);
 
             } catch (error) {
