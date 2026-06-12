@@ -29,6 +29,9 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #status {
+            color: #b90000;
+        }
         #error-message {
             color: #b90000;
             max-width: 80%;
@@ -66,17 +69,38 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerText = `🎵 Redirigiendo a: ${trackName} - ${artistName}`;
+                statusDiv.innerText = `🎵 Redirigiendo a: <strong> ${trackName} - ${artistName}`</strong>;
 
-                // Ajustado: Filtramos la búsqueda para forzar la URL del reproductor aislado (pantalla completa) de YouTube
-                const searchQuery = encodeURIComponent(`site:youtube.com/embed/ ${artistName} ${trackName} official video`);
+                // Buscamos el ID usando un motor alternativo rápido de raspado ligero (yt-search libre de CORS)
+                const query = encodeURIComponent(`${artistName} ${trackName} official video`);
+                const searchResponse = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.youtube.com/results?search_query=${query}`)}`);
                 
-                // Mantenemos el sistema de salto directo "Voy a tener suerte" con los parámetros multimedia heredados
-                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I&autoplay=1&playsinline=1`;
-
-                setTimeout(() => {
-                    window.location.href = luckyUrl;
-                }, 1000);
+                if (!searchResponse.ok) throw new Error("Error al buscar el vídeo");
+                
+                const searchData = await searchResponse.json();
+                const html = searchData.contents;
+                
+                // Extraemos el primer ID de vídeo válido (/watch?v=XXXXX) que encuentra en la página de YouTube
+                const match = html.match(/"videoId":"([^"]+)"/);
+                
+                if (match && match[1]) {
+                    const videoId = match[1];
+                    
+                    // Construimos la URL final convirtiendo dinámicamente el resultado a formato de pantalla completa (/v/)
+                    const fullScreenUrl = `https://www.youtube.com/v/${videoId}?autoplay=1&playsinline=1`;
+                    
+                    setTimeout(() => {
+                        window.location.href = fullScreenUrl;
+                    }, 800);
+                } else {
+                    // Si el motor rápido falla, aplicamos tu plan de contingencia con la búsqueda directa estructurada en watch
+                    const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video`);
+                    const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I&autoplay=1&playsinline=1`;
+                    
+                    setTimeout(() => {
+                        window.location.href = luckyUrl;
+                    }, 500);
+                }
 
             } catch (error) {
                 loader.style.display = 'none';
