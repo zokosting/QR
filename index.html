@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redireccionando...</title>
+    <title>Top Track...</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -30,7 +30,7 @@
             100% { transform: rotate(360deg); }
         }
         #error-message {
-            color: #ff6b6b;
+            color: #b90000;
             max-width: 80%;
             text-align: center;
             line-height: 1.5;
@@ -40,7 +40,7 @@
 <body>
 
     <div id="loader" class="loader"></div>
-    <div id="status">Tu obsesión...</div>
+    <div id="status">Tu última obsesión...</div>
     <p id="error-message"></p>
 
     <script>
@@ -58,7 +58,6 @@
 
                 const data = await response.json();
                 
-                // Validar que el usuario tenga canciones registradas
                 if (!data.toptracks || !data.toptracks.track || data.toptracks.track.length === 0) {
                     throw new Error("No se encontraron canciones en tu historial reciente.");
                 }
@@ -67,10 +66,10 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerText = `🎥 Abriendo vídeo de: ${trackName} - ${artistName}`;
+                statusDiv.innerText = `🎵 Lanzando: ${trackName} - ${artistName}`;
 
-                // Construimos la consulta exacta para forzar el primer resultado de YouTube
-                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video`);
+                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
+                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
                 
                 // Parámetro btnI activa el "Voy a tener suerte" de Google
                 const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
@@ -87,7 +86,6 @@
             }
         }
 
-        // Ejecutar la función al cargar la página
         redirectToTopTrack();
     </script>
 </body>
