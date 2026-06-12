@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¿Cuál es tu última canción favorita??</title>
+    <title>¿Cuál Es Tu Última Canción Favorita?</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -68,8 +68,8 @@
 
                 statusDiv.innerText = `🎵 Redirigiendo a: ${trackName} - ${artistName}`;
 
-                // Corregido: Separamos los términos de búsqueda del comando "site:" y estructuramos la URL limpia para el buscador
-                const searchQuery = encodeURIComponent(`${artistName} ${trackName} official video site:youtube.com/v/ &autoplay=1&playsinline=1`);
+                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
+                const searchQuery = encodeURIComponent(`site:youtube.com/v ${artistName} ${trackName} official video ?autoplay=1&playsinline=1`);
                 
                 // Parámetro btnI activa el "Voy a tener suerte" de Google
                 const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
