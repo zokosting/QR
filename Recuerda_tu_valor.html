@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Recuerda tu valor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+.centered-container { height:100%; width:100%; position:fixed; top:0; left:0; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; }
+.error-message { color:white; background-color:#f25041; padding:15px; border-radius:8px; margin:20px auto; width:80%; max-width:400px; font-family:sans-serif; text-align:center; }
+#audioPlayer { display:none; }
+#unmuteMessage { color:gray; font-size:4.5vw; padding:10px; }
+</style>
+</head>
+<body>
+<script>
+// Detectores simplificados
+function isAndroid() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  return /android/i.test(ua);
+}
+function isIOS() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  return /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+}
+
+// URL fija para este archivo
+const AUDIO_URL = "https://raw.githubusercontent.com/zokosting/QR/main/Recuerda%20tu%20valor.mp3";
+
+// Lógica iOS: crear audio con autoplay (no muted)
+function runIphoneLogic() {
+  if (!AUDIO_URL) {
+    document.body.innerHTML = '<div class="error-message">⚠️ No se encontró el archivo de audio.</div>';
+    return;
+  }
+  const audio = document.createElement('audio');
+  audio.autoplay = true;
+  audio.src = AUDIO_URL;
+  audio.type = 'audio/mpeg';
+  audio.style.display = 'none';
+  document.body.appendChild(audio);
+  audio.play().catch(err => {
+    console.warn('Autoplay iOS falló:', err);
+  });
+}
+
+// Lógica Android: autoplay muted + primer click desmutea
+function runAndroidAudioLogic() {
+  if (!AUDIO_URL) {
+    document.body.innerHTML = '<div class="error-message">⚠️ No se encontró el archivo de audio.</div>';
+    return;
+  }
+  const audioPlayer = document.createElement('audio');
+  audioPlayer.id = 'audioPlayer';
+  audioPlayer.autoplay = true;
+  audioPlayer.muted = true;
+  audioPlayer.style.display = 'none';
+  const src = document.createElement('source');
+  src.src = AUDIO_URL;
+  src.type = 'audio/mpeg';
+  audioPlayer.appendChild(src);
+  document.body.appendChild(audioPlayer);
+
+  const container = document.createElement('div');
+  container.className = 'centered-container';
+  const p = document.createElement('p');
+  p.id = 'unmuteMessage';
+  p.textContent = '🎧 Haz clic en cualquier parte para escuchar.';
+  container.appendChild(p);
+  document.body.appendChild(container);
+
+  audioPlayer.load();
+  audioPlayer.play().catch(e => { console.warn('Autoplay falló:', e); });
+
+  document.addEventListener('click', function() {
+    if (audioPlayer.muted) {
+      audioPlayer.muted = false;
+      const msg = document.getElementById('unmuteMessage');
+      if (msg) msg.style.display = 'none';
+    }
+  }, { once: true });
+}
+
+// Inicio
+(function init() {
+  if (isIOS()) {
+    runIphoneLogic();
+  } else if (isAndroid()) {
+    runAndroidAudioLogic();
+  } else {
+    document.body.innerHTML = '<div class="error-message">⚠️ Denegado. El contenido está optimizado para funcionar en dispositivos móviles.</div>';
+  }
+})();
+</script>
+</body>
+</html>
