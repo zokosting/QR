@@ -45,25 +45,11 @@
 
     <script>
         async function redirectToTopTrack() {
-            // 1. Obtener los parámetros de la URL (?user=TU_USER&api_key=TU_KEY)
-            const urlParams = new URLSearchParams(window.location.search);
-            const user = urlParams.get('user');
-            const apiKey = urlParams.get('api_key');
-
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('error-message');
             const loader = document.getElementById('loader');
 
-            // Guardilla por si faltan los parámetros
-            if (!user || !apiKey) {
-                loader.style.display = 'none';
-                statusDiv.innerText = "❌ Error";
-                errorMessage.innerHTML = "Formato incorrecto";
-                return;
-            }
-
             try {
-                // 2. Consultar la API de Last.fm (Top Track del último mes)
                 const _0x4f2a = ["YWxOb3J0ZWRlbWk=", "NWZkOWQ0ZTkyMjk1ZDU3MjQ0NGRhOGIxY2YwMzc2Nzk="];
                 const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${atob(_0x4f2a[0])}&api_key=${atob(_0x4f2a[1])}&limit=1&period=1month&format=json`;
                 
@@ -80,10 +66,10 @@
                 const topTrack = data.toptracks.track[0];
                 statusDiv.innerText = `🎵 Redirigiendo a: ${topTrack.name} - ${topTrack.artist.name}`;
 
-                // 3. Redirigir automáticamente a la página de la canción en Last.fm
+                // Redirigir automáticamente a la página de la canción en Last.fm
                 setTimeout(() => {
                     window.location.href = topTrack.url;
-                }, 1000); // Espera 1 segundo para que puedas ver el título antes de irte
+                }, 1000);
 
             } catch (error) {
                 loader.style.display = 'none';
