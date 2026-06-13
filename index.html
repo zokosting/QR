@@ -58,10 +58,9 @@
 
                 const data = await response.json();
                 
-                // Si no hay información de canciones o el array está vacío, redirige inmediatamente
                 if (!data.toptracks || !data.toptracks.track || data.toptracks.track.length === 0) {
                     window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
-                    return; 
+                    return;
                 }
 
                 const topTrack = data.toptracks.track[0];
@@ -70,15 +69,25 @@
 
                 statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;
 
-                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
+                // Construimos la consulta de búsqueda
                 const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
                 
-                // Parámetro btnI activa el "Voy a tener suerte" de Google
-                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
+                // URL inicial usando el botón "Voy a tener suerte"
+                let finalUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
 
-                // Redirigir en 1seg
+                // PASO SOLICITADO: Reemplazar "watch?v=" por "v/"
+                // Nota: Como btnI delega la redirección al navegador, este reemplazo sobre 'finalUrl' sólo afectará 
+                // si la URL de origen ya contiene esa estructura. Si la URL final la genera Google internamente,
+                // el navegador no te dejará interceptarla por motivos de seguridad (CORS).
+                if (finalUrl.includes("watch?v=")) {
+                    finalUrl = finalUrl.replace("watch?v=", "v/");
+                } else if (finalUrl.includes("watch/v?")) { // Por si acaso hubiera un error de formato en tu instrucción
+                    finalUrl = finalUrl.replace("watch/v?", "v/");
+                }
+
+                // Redirigir automáticamente tras 1 segundo
                 setTimeout(() => {
-                    window.location.href = luckyUrl;
+                    window.location.href = finalUrl;
                 }, 1000);
 
             } catch (error) {
