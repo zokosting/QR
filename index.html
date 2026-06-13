@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redireccionando...</title>
+    <title>Tu Última Canción Favorita</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -30,7 +30,7 @@
             100% { transform: rotate(360deg); }
         }
         #error-message {
-            color: #ff6b6b;
+            color: #b90000;
             max-width: 80%;
             text-align: center;
             line-height: 1.5;
@@ -40,49 +40,43 @@
 <body>
 
     <div id="loader" class="loader"></div>
-    <div id="status">Tu obsesión...</div>
+    <div id="status">Tu última obsesión...</div>
     <p id="error-message"></p>
 
     <script>
         async function redirectToTopTrack() {
-            // 1. Obtener los parámetros de la URL (?user=TU_USER&api_key=TU_KEY)
-            const urlParams = new URLSearchParams(window.location.search);
-            const user = urlParams.get('user');
-            const apiKey = urlParams.get('api_key');
-
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('error-message');
             const loader = document.getElementById('loader');
 
-            // Guardilla por si faltan los parámetros
-            if (!user || !apiKey) {
-                loader.style.display = 'none';
-                statusDiv.innerText = "❌ Error";
-                errorMessage.innerHTML = "Para que funcione, debes acceder usando el formato correcto en la URL";
-                return;
-            }
-
             try {
-                // 2. Consultar la API de Last.fm (Top Track del último mes)
-                const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${user}&api_key=${apiKey}&limit=1&period=1month&format=json`;
+                const _0x4f2a = ["YWxOb3J0ZWRlbWk=", "NWZkOWQ0ZTkyMjk1ZDU3MjQ0NGRhOGIxY2YwMzc2Nzk="];
+                const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${atob(_0x4f2a[0])}&api_key=${atob(_0x4f2a[1])}&limit=1&period=7day&format=json`;
                 
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error("Error al conectar con Last.fm");
 
                 const data = await response.json();
                 
-                // Validar que el usuario tenga canciones registradas
                 if (!data.toptracks || !data.toptracks.track || data.toptracks.track.length === 0) {
                     throw new Error("No se encontraron canciones en tu historial reciente.");
                 }
 
                 const topTrack = data.toptracks.track[0];
-                statusDiv.innerText = `🎵 Redirigiendo a: ${topTrack.name} - ${topTrack.artist.name}`;
+                const trackName = topTrack.name;
+                const artistName = topTrack.artist.name;
 
-                // 3. Redirigir automáticamente a la página de la canción en Last.fm
+                statusDiv.innerText = `🎵 Redirigiendo a: ${trackName} - ${artistName}`;
+
+                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
+                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
+                
+                // Parámetro btnI activa el "Voy a tener suerte" de Google
+                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
+
                 setTimeout(() => {
-                    window.location.href = topTrack.url;
-                }, 1000); // Espera 1 segundo para que puedas ver el título antes de irte
+                    window.location.href = luckyUrl;
+                }, 1000);
 
             } catch (error) {
                 loader.style.display = 'none';
@@ -91,7 +85,6 @@
             }
         }
 
-        // Ejecutar la función al cargar la página
         redirectToTopTrack();
     </script>
 </body>
