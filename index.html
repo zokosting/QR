@@ -58,27 +58,27 @@
 
                 const data = await response.json();
                 
+                // Si no hay información de canciones o el array está vacío, redirige inmediatamente
                 if (!data.toptracks || !data.toptracks.track || data.toptracks.track.length === 0) {
-                    throw new Error("No se encontraron canciones en tu historial reciente.");
+                    window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
+                    return; 
                 }
 
                 const topTrack = data.toptracks.track[0];
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerHTML = `🎵 Redirigiendo a Spotify:<br><strong>${trackName}</strong> - ${artistName}`;
+                statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;
 
-                // Construimos la query de búsqueda optimizada para Spotify
-                const searchQuery = encodeURIComponent(`track:${trackName} artist:${artistName}`);
+                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
+                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
                 
-                /* Utilizamos la URL de búsqueda de Spotify. 
-                   El parámetro :play activa el comportamiento de autoplay si el usuario tiene sesión iniciada o la app abierta.
-                */
-                const spotifyUrl = `https://open.spotify.com/search/${searchQuery}/play`;
+                // Parámetro btnI activa el "Voy a tener suerte" de Google
+                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
 
-                // Redirigir automáticamente tras 1 segundo
+                // Redirigir en 1seg
                 setTimeout(() => {
-                    window.location.href = spotifyUrl;
+                    window.location.href = luckyUrl;
                 }, 1000);
 
             } catch (error) {
