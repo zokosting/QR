@@ -66,17 +66,19 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerText = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;
+                statusDiv.innerHTML = `🎵 Redirigiendo a Spotify:<br><strong>${trackName}</strong> - ${artistName}`;
 
-                // Construimos la consulta exacta añadiendo las instrucciones de autoplay
-                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
+                // Construimos la query de búsqueda optimizada para Spotify
+                const searchQuery = encodeURIComponent(`track:${trackName} artist:${artistName}`);
                 
-                // Parámetro btnI activa el "Voy a tener suerte" de Google
-                const luckyUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
+                /* Utilizamos la URL de búsqueda de Spotify. 
+                   El parámetro :play activa el comportamiento de autoplay si el usuario tiene sesión iniciada o la app abierta.
+                */
+                const spotifyUrl = `https://open.spotify.com/search/${searchQuery}/play`;
 
-                // Redirigir automáticamente
+                // Redirigir automáticamente tras 1 segundo
                 setTimeout(() => {
-                    window.location.href = luckyUrl;
+                    window.location.href = spotifyUrl;
                 }, 1000);
 
             } catch (error) {
