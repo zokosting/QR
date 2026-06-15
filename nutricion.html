@@ -9,23 +9,23 @@
   <script>
     // PLAN B
     const fallbackAudioUrls = [
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Afirmaciones%20para%20confiar%20en%20los%20cambios.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Agradecimientos.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Atrae%20un%20buen%20d%C3%ADa.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Cada%20Paso%20Cuenta.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Carta%20para%20cuando%20no%20puedes%20dejar%20de%20pensar.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Dejar%20ir%20el%20pasado.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/El%20poder%20de%20la%20historia%20que%20te%20cuentas.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Encuentra%20el%20balance%20en%20tu%20d%C3%ADa%20a%20d%C3%ADa.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Para%20encontrar%20paz%20hoy.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Perm%C3%ADtete%20So%C3%B1ar.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Recuerda%20tu%20valor.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Renovar%20tu%20energ%C3%ADa.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3",
-        "https://raw.githubusercontent.com/zokosting/QR/main/audios/Todo%20Va%20A%20Estar%20Bien.mp3"
+        "https://zokosting.github.io/QR/audios/5%20minutos%20de%20afirmaciones%20para%20recordarte%20lo%20incre%C3%ADble%20que%20eres.mp3",
+        "https://zokosting.github.io/QR/audios/Afirmaciones%20para%20confiar%20en%20los%20cambios.mp3",
+        "https://zokosting.github.io/QR/audios/Afirmaciones%20poderosas%20para%20volver%20a%20confiar%20en%20ti.mp3",
+        "https://zokosting.github.io/QR/audios/Agradecimientos.mp3",
+        "https://zokosting.github.io/QR/audios/Atrae%20un%20buen%20d%C3%ADa.mp3",
+        "https://zokosting.github.io/QR/audios/Cada%20Paso%20Cuenta.mp3",
+        "https://zokosting.github.io/QR/audios/Carta%20para%20cuando%20no%20puedes%20dejar%20de%20pensar.mp3",
+        "https://zokosting.github.io/QR/audios/Cosas%20a%20recordar%20este%20a%C3%B1o.mp3",
+        "https://zokosting.github.io/QR/audios/Dejar%20ir%20el%20pasado.mp3",
+        "https://zokosting.github.io/QR/audios/El%20poder%20de%20la%20historia%20que%20te%20cuentas.mp3",
+        "https://zokosting.github.io/QR/audios/Encuentra%20el%20balance%20en%20tu%20d%C3%ADa%20a%20d%C3%ADa.mp3",
+        "https://zokosting.github.io/QR/audios/Para%20encontrar%20paz%20hoy.mp3",
+        "https://zokosting.github.io/QR/audios/Perm%C3%ADtete%20So%C3%B1ar.mp3",
+        "https://zokosting.github.io/QR/audios/Recuerda%20tu%20valor.mp3",
+        "https://zokosting.github.io/QR/audios/Renovar%20tu%20energ%C3%ADa.mp3",
+        "https://zokosting.github.io/QR/audios/Si%C3%A9ntete%20orgulloso%20de%20lo%20que%20eres.mp3",
+        "https://zokosting.github.io/QR/audios/Todo%20Va%20A%20Estar%20Bien.mp3"
     ];
 
     let audioUrls = [];
@@ -54,7 +54,7 @@
               .filter(item => item.type === 'blob' && /^audios\//i.test(item.path) && /\.mp3$/i.test(item.path))
               .map(item => item.path);
               
-            const rawBase = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/`;
+            const rawBase = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`;
             const urls = mp3Paths.map(p => rawBase + encodeURI(p));
             resolve(urls);
           })
