@@ -37,7 +37,9 @@
     #unmuteMessage {
       color: gray;
       font-size: 4.5vw; 
-      padding: 10px; 
+      padding: 20px; 
+      max-width: 80%;
+      line-height: 1.4;
     }
   </style>
 </head>
@@ -125,6 +127,20 @@
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
+    // Función auxiliar para extraer un título limpio a partir de la URL del archivo
+    function getCleanTitle(url) {
+      try {
+        // Decodifica los %20 y caracteres raros de la URL
+        const decodedUrl = decodeURIComponent(url);
+        // Extrae solo la última parte (el nombre del archivo)
+        const fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/') + 1);
+        // Quita la extensión .mp3 del final
+        return fileName.replace(/\.mp3$/i, '');
+      } catch(e) {
+        return "Audio motivacional";
+      }
+    }
+
     // LÓGICA DE REPRODUCCIÓN PARA iOS: creamos el <audio> por DOM (evita document.write después de load)
     function runIphoneLogic() {
       const VARIABLE = chooseRandom(audioUrls) || chooseRandom(fallbackAudioUrls);
@@ -175,12 +191,15 @@
       audioPlayer.appendChild(src);
       document.body.appendChild(audioPlayer);
 
-      // Mensaje centrado para que el usuario haga click y desmute
+      // Obtenemos el título limpio del archivo seleccionado
+      const audioTitle = getCleanTitle(VARIABLE);
+
+      // Mensaje centrado que ahora muestra el título del archivo mp3
       const container = document.createElement('div');
       container.className = 'centered-container';
       const p = document.createElement('p');
       p.id = 'unmuteMessage';
-      p.textContent = '🎧 Haz clic en cualquier parte para escuchar.';
+      p.textContent = audioTitle; // <-- Aquí se reemplaza el texto por el título del audio
       container.appendChild(p);
       document.body.appendChild(container);
 
@@ -224,6 +243,5 @@
     })();
   </script>
   
-  <!-- El resto del cuerpo se renderiza después de la inyección -->
-</body>
+  </body>
 </html>
