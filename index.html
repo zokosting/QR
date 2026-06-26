@@ -43,13 +43,16 @@
     <div id="status">Tu última obsesión...</div>
     <p id="error-message"></p>
 
-    <script>
+    <script>        
+        const YOUTUBE_API_KEY = "AIzaSyD6RmzZIhveCHA7kmfPFmxT7ee79pHIxaM";
+
         async function redirectToTopTrack() {
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('error-message');
             const loader = document.getElementById('loader');
 
             try {
+                // 1. Obtener el Top Track de Last.fm
                 const _0x4f2a = ["YWxOb3J0ZWRlbWk=", "NWZkOWQ0ZTkyMjk1ZDU3MjQ0NGRhOGIxY2YwMzc2Nzk="];
                 const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${atob(_0x4f2a[0])}&api_key=${atob(_0x4f2a[1])}&limit=1&period=7day&format=json`;
                 
@@ -58,6 +61,7 @@
 
                 const data = await response.json();
                 
+                // Fallback si no hay temas en Last.fm esta semana
                 if (!data.toptracks || !data.toptracks.track || data.toptracks.track.length === 0) {
                     window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
                     return;
@@ -67,28 +71,30 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;
+                // statusDiv.innerHTML = `🔍 Buscando en YouTube: <strong>${trackName} - ${artistName}</strong>`;
 
-                // Construimos la consulta de búsqueda
-                const searchQuery = encodeURIComponent(`site:youtube.com/watch ${artistName} ${trackName} official video &autoplay=1`);
+                // 2. Consultar a la API de YouTube para obtener el ID exacto del vídeo
+                const query = `${artistName} ${trackName} official video`;
+                const ytApiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=${YOUTUBE_API_KEY}`;
+
+                const ytResponse = await fetch(ytApiUrl);
+                if (!ytResponse.ok) throw new Error("Error al conectar con la API de YouTube");
                 
-                // URL inicial usando el botón "Voy a tener suerte"
-                let finalUrl = `https://www.google.com/search?q=${searchQuery}&btnI=I`;
+                const ytData = await ytResponse.json();
 
-                // PASO SOLICITADO: Reemplazar "watch?v=" por "v/"
-                // Nota: Como btnI delega la redirección al navegador, este reemplazo sobre 'finalUrl' sólo afectará 
-                // si la URL de origen ya contiene esa estructura. Si la URL final la genera Google internamente,
-                // el navegador no te dejará interceptarla por motivos de seguridad (CORS).
-                if (finalUrl.includes("watch?v=")) {
-                    finalUrl = finalUrl.replace("watch?v=", "v/");
-                } else if (finalUrl.includes("watch/v?")) { // Por si acaso hubiera un error de formato en tu instrucción
-                    finalUrl = finalUrl.replace("watch/v?", "v/");
+                // 3. Redirigir si encontramos el vídeo
+                if (ytData.items && ytData.items.length > 0) {
+                    const videoId = ytData.items[0].id.videoId;
+                    statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName}</strong>`;
+                    
+                    setTimeout(() => {
+                        window.location.href = `https://www.youtube.com/watch?v=${videoId}&autoplay=1`;
+                    }, 1000);
+                } else {
+                    // Si por algún motivo raro YouTube no devuelve nada, usamos tu fallback de Spotify
+                    statusDiv.innerHTML = `🎵 Hoy te sorprendo con ésta...`;
+                    window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
                 }
-
-                // Redirigir automáticamente tras 1 segundo
-                setTimeout(() => {
-                    window.location.href = finalUrl;
-                }, 1000);
 
             } catch (error) {
                 loader.style.display = 'none';
