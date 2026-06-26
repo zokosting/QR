@@ -71,8 +71,6 @@
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
 
-                // statusDiv.innerHTML = `🔍 Buscando en YouTube: <strong>${trackName} - ${artistName}</strong>`;
-
                 // 2. Consultar a la API de YouTube para obtener el ID exacto del vídeo
                 const query = `${artistName} ${trackName} official video`;
                 const ytApiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=${YOUTUBE_API_KEY}`;
@@ -88,10 +86,10 @@
                     statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName}</strong>`;
                     
                     setTimeout(() => {
-                        window.location.href = `https://www.youtube.com/watch?v=${videoId}&autoplay=1`;
+                        // Cambiado al formato /v/ tal como has solicitado
+                        window.location.href = `https://www.youtube.com/v/${videoId}&autoplay=1`;
                     }, 1000);
                 } else {
-                    // Si por algún motivo raro YouTube no devuelve nada, usamos tu fallback de Spotify
                     statusDiv.innerHTML = `🎵 Hoy te sorprendo con ésta...`;
                     window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
                 }
