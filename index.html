@@ -72,7 +72,7 @@
                 const artistName = topTrack.artist.name;
 
                 // 2. Consultar a la API de YouTube para obtener el ID exacto del vídeo
-                const query = `${artistName} ${trackName} official video`;
+                const query = `${artistName} "${trackName}"`;
                 const ytApiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=${YOUTUBE_API_KEY}`;
 
                 const ytResponse = await fetch(ytApiUrl);
@@ -83,10 +83,8 @@
                 // 3. Redirigir si encontramos el vídeo
                 if (ytData.items && ytData.items.length > 0) {
                     const videoId = ytData.items[0].id.videoId;
-                    statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName}</strong>`;
-                    
+                    statusDiv.innerHTML = `🎵 Redirigiendo a: <strong>${trackName} - ${artistName}</strong>`;                    
                     setTimeout(() => {
-                        // Cambiado al formato /v/ tal como has solicitado
                         window.location.href = `https://www.youtube.com/v/${videoId}&autoplay=1`;
                     }, 1000);
                 } else {
