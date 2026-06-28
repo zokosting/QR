@@ -44,8 +44,7 @@
     <p id="error-message"></p>
 
     <script>        
-        const YOUTUBE_API_KEY = "AIzaSyD6RmzZIhveCHA7kmfPFmxT7ee79pHIxaM";
-
+        const CYK2 = "QUl6YVN5RERnUGplUU42bGhFOXhTYktNaWR2blFQM1FJTG5NMzlz";
         async function redirectToTopTrack() {
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('error-message');
@@ -70,10 +69,11 @@
                 const topTrack = data.toptracks.track[0];
                 const trackName = topTrack.name;
                 const artistName = topTrack.artist.name;
+                const KYC2 = atob(CYK2);
 
-                // 2. Consultar a la API de YouTube para obtener el ID exacto del vídeo
+                // 2. Consultar YouTube para obtener el ID exacto del vídeo
                 const query = `${artistName} "${trackName}"`;
-                const ytApiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=${YOUTUBE_API_KEY}`;
+                const ytApiUrl = `https://www.googleapis.com/youtube/v3/search?part=id&q=${encodeURIComponent(query)}&type=video&maxResults=1&key=${KYC2}`;
 
                 const ytResponse = await fetch(ytApiUrl);
                 if (!ytResponse.ok) throw new Error("Error al conectar con la API de YouTube");
@@ -88,7 +88,7 @@
                         window.location.href = `https://www.youtube.com/v/${videoId}&autoplay=1`;
                     }, 1000);
                 } else {
-                    statusDiv.innerHTML = `🎵 Hoy te sorprendo con ésta...`;
+                    statusDiv.innerHTML = `🎵 Hoy te voy a sorprender con...`;
                     window.location.href = "https://open.spotify.com/track/0txzIz1WcoAn6m07xypcD5?si=egh83pzQTKCdDCTfTF5CLw";
                 }
 
